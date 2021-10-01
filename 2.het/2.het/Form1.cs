@@ -42,13 +42,15 @@ namespace _2.het
         private void button2_Click(object sender, EventArgs e)
         {
             var sfd = new SaveFileDialog();
-            if (sfd.ShowDialog() != DialogResult.OK)
-                return;
+            if (sfd.ShowDialog() != DialogResult.OK) return;
             using (var sw = new StreamWriter(sfd.FileName, false, Encoding.UTF8))
                 foreach (var u in users)
-                    sw.WriteLine(string.Format(
-                        "{ID}; {FullName}"
-                        ));
+                {
+                    sw.Write(u.ID);
+                    sw.Write(";");
+                    sw.Write(u.FullName);
+                    sw.WriteLine();
+                }
         }
     }
 }
