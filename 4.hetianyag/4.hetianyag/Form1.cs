@@ -8,23 +8,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace _4.het
+namespace _4.hetianyag
 {
-
     public partial class Form1 : Form
     {
-        RealEstateEntities2 context = new RealEstateEntities2();
-        List<Flat> Flats;
-
         public Form1()
         {
             InitializeComponent();
-            LoadData();
-        }
-
-        private void LoadData()
-        {
-            Flats = context.Flats.ToList();
         }
     }
 }
