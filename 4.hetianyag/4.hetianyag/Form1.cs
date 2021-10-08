@@ -14,16 +14,20 @@ namespace _4.hetianyag
 {
     public partial class Form1 : Form
     {
+        private int _million = (int)Math.Pow(10, 6);
+
         RealEstateEntities context = new RealEstateEntities();
         List<Flat> Flats;
         Excel.Application xlApp; // A Microsoft Excel alkalmazás
         Excel.Workbook xlWB; // A létrehozott munkafüzet
         Excel.Worksheet xlSheet; // Munkalap a munkafüzeten belül
+        string[] headers;
 
         public Form1()
         {
             InitializeComponent();
             LoadData();
+            CreateExcel();
         }
         private void LoadData()
         {
@@ -44,7 +48,8 @@ namespace _4.hetianyag
                 xlSheet = xlWB.ActiveSheet;
 
                 // Tábla létrehozása
-                CreateTable(); // Ennek megírása a következő feladatrészben következik
+                CreateTable();
+                FormatTable();
 
                 // Control átadása a felhasználónak
                 xlApp.Visible = true;
@@ -63,6 +68,22 @@ namespace _4.hetianyag
             }
         }
 
+        private void FormatTable()
+        {
+            Excel.Range headerRange = xlSheet.get_Range(GetCell(1, 1), GetCell(1, headers.Length));
+            headerRange.Font.Bold = true;
+            headerRange.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+            headerRange.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            headerRange.EntireColumn.AutoFit();
+            headerRange.RowHeight = 40;
+            headerRange.Interior.Color = Color.LightBlue;
+            headerRange.BorderAround2(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick);
+
+            int lastRowID = xlSheet.UsedRange.Rows.Count;
+            Excel.Range completeTableRange = xlSheet.get_Range(GetCell(1, 1), GetCell(lastRowID, headers.Length));
+            completeTableRange.BorderAround2(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick);
+        }
+
         private void CreateTable()
         {
             string[] headers = new string[] 
@@ -75,7 +96,24 @@ namespace _4.hetianyag
                 "Szobák száma",
                 "Alapterület (m2)",
                 "Ár (mFt)",
-                "Négyzetméter ár (Ft/m2)"};
+                "Négyzetméter ár (Ft/m2)"
+            };
+        }
+        private string GetCell(int x, int y)
+        {
+            string ExcelCoordinate = "";
+            int dividend = y;
+            int modulo;
+
+            while (dividend > 0)
+            {
+                modulo = (dividend - 1) % 26;
+                ExcelCoordinate = Convert.ToChar(65 + modulo).ToString() + ExcelCoordinate;
+                dividend = (int)((dividend - modulo) / 26);
             }
+            ExcelCoordinate += x.ToString();
+
+            return ExcelCoordinate;
+        }
     }
 }
